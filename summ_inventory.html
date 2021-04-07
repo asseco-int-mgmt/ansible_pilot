@@ -1,0 +1,6672 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Ansible Overview</title>
+    <style type="text/css">
+      /* reset.css */
+      html, body, div, span, applet, object, iframe,
+      h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+      a, abbr, acronym, address, big, cite, code,
+      del, dfn, em, img, ins, kbd, q, s, samp,
+      small, strike, strong, sub, sup, tt, var,
+      b, u, i, center,
+      dl, dt, dd, ol, ul, li,
+      fieldset, form, label, legend,
+      table, caption, tbody, tfoot, thead, tr, th, td,
+      article, aside, canvas, details, embed,
+      figure, figcaption, footer, header, hgroup,
+      menu, nav, output, ruby, section, summary,
+      time, mark, audio, video {
+        margin: 0; padding: 0; border: 0; font-size: 100%; font: inherit; vertical-align: baseline;
+      }
+      /* HTML5 display-role reset for older browsers */
+      article, aside, details, figcaption, figure,
+      footer, header, hgroup, menu, nav, section { display: block; }
+      body { line-height: 1; }
+      ol, ul { list-style: none; }
+      blockquote, q { quotes: none; }
+      blockquote:before, blockquote:after,
+      q:before, q:after { content: ''; content: none; }
+      table { border-collapse: collapse; border-spacing: 0; }
+
+      /* ansible-cmdb */
+      *, body { font-family: sans-serif; font-weight: lighter; }
+      a { text-decoration: none; }
+      b { font-weight: bold; }
+      p { margin-bottom: 1em; }
+
+      header { position: fixed; top: 0px; left: 0px; right: 0px; background-color: #0071b8; overflow: auto; color: #E0E0E0; padding: 15px; z-index: 1000; }
+      header h1 { font-size: x-large; float: left; line-height: 32px; font-weight: bold; }
+      header #clear_settings { float: right; line-height: 32px; font-size: small; margin-left: 12px; }
+      header #clear_settings a { color: #FFFFFF; font-weight: bold; padding: 6px; background-color: #0090F0; box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.15); }
+      header #generated { float: right; line-height: 32px; font-size: small; }
+      header #top { display: none; }
+      header #top a { line-height: 32px; margin-left: 64px; color: #FFFFFF; border-bottom: 1px solid #909090; }
+      header #generated .detail { font-weight: bold; }
+
+      footer { display: block; position: fixed; bottom: 0px; right: 0px; left: 0px; background-color: #d5d5d5; overflow: auto; color: #505050; padding: 4px; font-size: x-small; text-align: right; padding-right: 8px; }
+      footer a { font-weight: bold; text-decoration: none; color: #202020; }
+
+      #col_toggles { margin: 32px; margin-top: 100px; }
+      #col_toggles h2 { display: block; font-size: 1.4em; margin-bottom: 32px; color: #606060; }
+      #col_toggle_buttons { margin-left: 32px; font-weight: normal; line-height: 40px; }
+      #col_toggles a { line-height: 40px; }
+      #col_toggles a { display: inline-block; background-color: #009688; line-height: 32px; padding: 0px 15px 0px 15px; margin-right: 6px; box-shadow: 2px 2px 0px 0px rgba(0,0,0,0.35); color: #FFFFFF; }
+      #col_toggles a.col-invisible { background-color: #B0B0B0; box-shadow: 0 0px 0px 0; }
+
+      #host_overview { margin: 32px; }
+      #host_overview h2 { display: block; font-size: 1.4em; color: #606060; }
+      #host_overview_tbl_wrapper{ margin-left: 16px; }
+      #host_overview table { width: 100%; clear: both; }
+      #host_overview tr { border-bottom: 1px solid #F0F0F0; }
+      #host_overview tr:hover { background-color: #F0F0F0; }
+      #host_overview thead th { text-align: left; color: #707070; padding: 16px 0px 8px 16px; border-bottom: 1px solid #C0C0C0; font-weight: bold; cursor: pointer; background-repeat: no-repeat; background-position: center right; background-image: url("https://cdn.datatables.net/1.10.2//images/sort_both.png"); }
+      #host_overview thead th.sorting_desc { background-image: url("https://cdn.datatables.net/1.10.2//images/sort_desc.png"); }
+      #host_overview thead th.sorting_asc { background-image: url("https://cdn.datatables.net/1.10.2//images/sort_asc.png"); }
+      #host_overview tbody td { color: #000000; padding: 8px 12px 8px 12px; }
+      #host_overview tbody a { text-decoration: none; color: #005c9d; }
+      #host_overview_tbl_filter { float: right; color: #808080; padding-bottom: 32px; }
+      #host_overview_tbl_filter label input { margin-left: 12px; }
+      #host_overview_tbl_filter #filter_link a { color: #000000; background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAoUlEQVR4Xu2TIQ6EMBBF/+4dOUBFBYoboBHoBsuRUCgcnpDg3/Y7ICQVK3ebvPxJ30xH9QXom/PO/PoDAjSOY8pwIwFFr2EYUobjONj33bjGd3Ylr77v2bYNp7Hwhifs3HOeUdu2LMuCE1DXdedtl612cJ1R0zRM04TT1HVNjPERO/ecZxRCSBnmeWZdV+Ma39mVvABVVZUy3EhA0f//gvQB4y08WIiD/goAAAAASUVORK5CYII=) no-repeat left center; padding: 5px 0 5px 25px; }
+      #host_overview_tbl_info { margin-top: 16px; color: #C0C0C0; }
+      #host_overview .bar { clear: both; margin-bottom: 1px; }
+      #host_overview .prog_bar_full { float: left; display: block; height: 12px; border: 1px solid #000000; padding: 1px; margin-right: 4px; color: white; text-align: center; }
+      #host_overview .prog_bar_used { display: block; height: 12px; background-color: #8F4040; }
+      #host_overview tbody td.error a { color: #FF0000; }
+      #host_overview span.usage_detail { color: #606060; }
+      #host_overview .error { color: #FF0000; }
+
+      #hosts { margin-left: 32px; margin-bottom: 120px; }
+      #hosts .toggle-collapse { cursor: pointer; }
+      #hosts a.toggle-all { margin-top: 20px; display: inline-block; color: #0080FF; }
+      #hosts a { color: #005c9d; }
+      #hosts p.desc { color: #303030; margin-bottom: 32px; max-width: 800px; }
+      #hosts h3.collapsed::before { color: #505050; margin-right: 16px; content: "⊞";  font-weight: 200; font-size: large; }
+      #hosts h3.uncollapsed::before { color: #505050; margin-right: 16px; content: "⊟";  font-weight: 200; font-size: large;}
+      #hosts h4.collapsed::before { color: #505050; margin-right: 16px; content: "⊞";  font-weight: 200; font-size: large;}
+      #hosts h4.uncollapsed::before { color: #505050; margin-right: 16px; content: "⊟"; font-weight: 200; font-size: large;}
+      #hosts h5.collapsed::before { color: #505050; margin-right: 16px; content: "⊞";  font-weight: 200; font-size: large;}
+      #hosts h5.uncollapsed::before { color: #505050; margin-right: 16px; content: "⊟"; font-weight: 200; font-size: large;}
+      #hosts div.collapsable { margin-left: 16px; }
+      #hosts div.collapsed { display: none; }
+      #hosts h3.uncollapsed { line-height: 1.5em; font-size: xx-large; border-bottom: 1px solid #D0D0D0; }
+      #hosts h3.collapsed {  line-height: 1.5em; font-size: xx-large; }
+      #hosts h4 { font-size: large; font-weight: bold; color: #404040; margin-top: 32px; margin-bottom: 32px; }
+      #hosts h5 { font-weight: bold; color: #404040; margin-top: 32px; margin-bottom: 32px; }
+      #hosts th { text-align: left; color: #808080; padding-bottom: 10px; }
+      #hosts td { padding-left: 16px; color: #303030; padding-bottom: 10px; }
+      #hosts ul { list-style: square; margin-left: 48px; }
+      #hosts table.net_overview td, #hosts table.net_overview th { text-align: left; padding: 0px 0px 8px 16px; margin: 0px; }
+      #hosts table.net_overview { margin: 16px 0px 16px 0px; }
+      #hosts .error { color: #FF0000; }
+    </style>
+    <!-- DataTables assets -->
+      <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.2//js/jquery.dataTables.js"></script>
+  </head>
+  <body>
+
+
+  <header>
+    <h1>Host overview</h1>
+    <span id="top"><a href="#">Back to top</a></span>
+    <span id="clear_settings"><a href="javascript:window.localStorage.clear('columnVisibility'); location.reload();" title="If things are acting weird, press this button">Clear settings</a></span> 
+    <span id="generated">Generated on <span class="detail">Wed Apr  7 08:50:33 2021</span> by <span class="detail">asseco-user</span> @ <span class="detail">ace-hu-nbsz01</span></span>
+  </header>
+
+
+  <div id="col_toggles">
+    <h2>Shown columns</h2>
+    <div id="col_toggle_buttons">
+        
+        <a href="" class="col-toggle col-visible" data-column="0" data-column-id="name">Name</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="1" data-column-id="groups">Groups</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="2" data-column-id="cust">Cust</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="3" data-column-id="dtap">DTAP</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="4" data-column-id="comment">Comment</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="5" data-column-id="ext_id">Ext ID</a>
+        
+        <a href="" class="col-toggle col-visible" data-column="6" data-column-id="fqdn">FQDN</a>
+        
+        <a href="" class="col-toggle col-visible" data-column="7" data-column-id="main_ip">Main IP</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="8" data-column-id="all_ipv4">All IPv4</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="9" data-column-id="all_ipv6">All IPv6</a>
+        
+        <a href="" class="col-toggle col-visible" data-column="10" data-column-id="os">OS</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="11" data-column-id="kernel">Kernel</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="12" data-column-id="arch">Arch</a>
+        
+        <a href="" class="col-toggle col-visible" data-column="13" data-column-id="virt">Virt</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="14" data-column-id="cpu_type">CPU type</a>
+        
+        <a href="" class="col-toggle col-visible" data-column="15" data-column-id="vcpus">vCPUs</a>
+        
+        <a href="" class="col-toggle col-visible" data-column="16" data-column-id="ram">RAM [GiB]</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="17" data-column-id="mem_usage">Mem Usage</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="18" data-column-id="swap_usage">Swap Usage</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="19" data-column-id="disk_usage">Disk usage</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="20" data-column-id="physdisk_size">PhysDisk size</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="21" data-column-id="nr_of_ifaces">Nr of Ifaces</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="22" data-column-id="timestamp">Timestamp</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="23" data-column-id="prodname">Product Name</a>
+        
+        <a href="" class="col-toggle col-invisible" data-column="24" data-column-id="prodserial">Product Serial</a>
+    </div>
+  </div>
+
+
+  <div id="host_overview">
+    <h2>Host overview</h2>
+    <div id="host_overview_tbl_wrapper">
+      <table id="host_overview_tbl" class="demo display dataTable compact">
+      <thead>
+        <tr>
+            <th>Name</th>
+            <th>Groups</th>
+            <th>Cust</th>
+            <th>DTAP</th>
+            <th>Comment</th>
+            <th>Ext ID</th>
+            <th>FQDN</th>
+            <th>Main IP</th>
+            <th>All IPv4</th>
+            <th>All IPv6</th>
+            <th>OS</th>
+            <th>Kernel</th>
+            <th>Arch</th>
+            <th>Virt</th>
+            <th>CPU type</th>
+            <th>vCPUs</th>
+            <th>RAM [GiB]</th>
+            <th>Mem Usage</th>
+            <th>Swap Usage</th>
+            <th>Disk usage</th>
+            <th>PhysDisk size</th>
+            <th>Nr of Ifaces</th>
+            <th>Timestamp</th>
+            <th>Product Name</th>
+            <th>Product Serial</th>
+        </tr>
+      </thead>
+      <tbody>
+          
+            <tr>                  <td>
+  
+    <a href="#172.31.17.86" class="">172.31.17.86</a>
+</td>                  <td>
+  
+</td>                  <td>
+  
+</td>                  <td>
+  
+</td>                  <td>
+  
+</td>                  <td>
+  
+</td>                  <td>
+  ace-hu-nbsz01
+</td>                  <td>
+  
+  172.31.17.86
+</td>                  <td>
+  
+  172.31.17.86
+</td>                  <td>
+  fe80::215:5dff:fedc:d050
+</td>                  <td>
+    Ubuntu 20.04
+</td>                  <td>
+  5.4.0-70-generic
+</td>                  <td>
+  x86_64 / x86_64
+</td>                  <td>
+  VirtualPC / guest
+</td>                  <td>
+  
+    <a href="http://www.cpubenchmark.net/cpu.php?cpu=Intel(R) Xeon(R) CPU E5-2640 v3 @ 2.60GHz">Intel(R) Xeon(R) CPU E5-2640 v3 @ 2.60GHz</a>
+</td>                  <td>
+    2
+</td>                  <td>
+  5.8
+</td>                  <td>
+    
+    <div class="bar">
+      <span style="display:none">0.105058</span>
+      <span class="prog_bar_full" style="width:100px">
+        <span class="prog_bar_used" style="width:10.5057705363px"></span>
+      </span>
+      <span class="usage_detail">(0.6 / 5.8 GiB)</span>
+    </div>
+</td>                  <td>
+    
+    <div class="bar">
+      <span style="display:none">0.000000</span>
+      <span class="prog_bar_full" style="width:100px">
+        <span class="prog_bar_used" style="width:0.0px"></span>
+      </span>
+      <span class="usage_detail">(0.0 / 8.0 GiB)</span>
+    </div>
+</td>                  <td>
+      
+      <span style="display:none">0.154091</span>
+      <div class="bar">
+        <span class="prog_bar_full" style="width:100px">
+          <span class="prog_bar_used" style="width:15.4091149099px"></span>
+        </span> / <span class="usage_detail">(9.7 / 63.0 GiB)</span>
+      </div>
+      
+      <span style="display:none">0.176848</span>
+      <div class="bar">
+        <span class="prog_bar_full" style="width:100px">
+          <span class="prog_bar_used" style="width:17.6848256815px"></span>
+        </span> /boot <span class="usage_detail">(0.2 / 1.0 GiB)</span>
+      </div>
+      
+      <span style="display:none">1.000000</span>
+      <div class="bar">
+        <span class="prog_bar_full" style="width:100px">
+          <span class="prog_bar_used" style="width:100.0px"></span>
+        </span> /snap/core18/1944 <span class="usage_detail">(0.1 / 0.1 GiB)</span>
+      </div>
+      
+      <span style="display:none">1.000000</span>
+      <div class="bar">
+        <span class="prog_bar_full" style="width:100px">
+          <span class="prog_bar_used" style="width:100.0px"></span>
+        </span> /snap/core18/1997 <span class="usage_detail">(0.1 / 0.1 GiB)</span>
+      </div>
+      
+      <span style="display:none">1.000000</span>
+      <div class="bar">
+        <span class="prog_bar_full" style="width:100px">
+          <span class="prog_bar_used" style="width:100.0px"></span>
+        </span> /snap/lxd/19188 <span class="usage_detail">(0.1 / 0.1 GiB)</span>
+      </div>
+      
+      <span style="display:none">1.000000</span>
+      <div class="bar">
+        <span class="prog_bar_full" style="width:100px">
+          <span class="prog_bar_used" style="width:100.0px"></span>
+        </span> /snap/snapd/10707 <span class="usage_detail">(0.0 / 0.0 GiB)</span>
+      </div>
+      
+      <span style="display:none">0.015266</span>
+      <div class="bar">
+        <span class="prog_bar_full" style="width:100px">
+          <span class="prog_bar_used" style="width:1.52661835306px"></span>
+        </span> /boot/efi <span class="usage_detail">(0.0 / 0.5 GiB)</span>
+      </div>
+      
+      <span style="display:none">1.000000</span>
+      <div class="bar">
+        <span class="prog_bar_full" style="width:100px">
+          <span class="prog_bar_used" style="width:100.0px"></span>
+        </span> /snap/snapd/11402 <span class="usage_detail">(0.0 / 0.0 GiB)</span>
+      </div>
+      
+      <span style="display:none">1.000000</span>
+      <div class="bar">
+        <span class="prog_bar_full" style="width:100px">
+          <span class="prog_bar_used" style="width:100.0px"></span>
+        </span> /snap/lxd/19647 <span class="usage_detail">(0.1 / 0.1 GiB)</span>
+      </div>
+</td>                  <td>
+      dm-1: 4.00 GB<br />
+      dm-0: 64.50 GB<br />
+      sda: 70.00 GB<br />
+      loop3: 31.09 MB<br />
+      loop2: 69.88 MB<br />
+      loop1: 55.45 MB<br />
+      loop0: 55.38 MB<br />
+      loop7: 0.00 Bytes<br />
+      loop6: 0.00 Bytes<br />
+      loop5: 70.38 MB<br />
+      loop4: 32.27 MB<br />
+</td>                  <td>
+  2
+</td>                  <td>
+  2021-04-07T08:44:39Z
+</td>                  <td>
+  Virtual Machine
+</td>                  <td>
+  NA
+</td>            </tr>
+          
+            <tr>                  <td>
+  
+    <a href="#172.31.17.87" class="">172.31.17.87</a>
+</td>                  <td>
+  
+</td>                  <td>
+  
+</td>                  <td>
+  
+</td>                  <td>
+  
+</td>                  <td>
+  
+</td>                  <td>
+  ace-hu-nbsz02
+</td>                  <td>
+  
+  172.31.17.87
+</td>                  <td>
+  
+  172.31.17.87
+</td>                  <td>
+  fe80::40d3:5e5c:a131:a581
+</td>                  <td>
+    OracleLinux 7.9
+</td>                  <td>
+  4.14.35-2047.501.2.el7uek.x86_64
+</td>                  <td>
+  x86_64 / x86_64
+</td>                  <td>
+  VirtualPC / guest
+</td>                  <td>
+  
+    <a href="http://www.cpubenchmark.net/cpu.php?cpu=Intel(R) Xeon(R) CPU E5-2640 v3 @ 2.60GHz">Intel(R) Xeon(R) CPU E5-2640 v3 @ 2.60GHz</a>
+</td>                  <td>
+    2
+</td>                  <td>
+  5.8
+</td>                  <td>
+    
+    <div class="bar">
+      <span style="display:none">0.046240</span>
+      <span class="prog_bar_full" style="width:100px">
+        <span class="prog_bar_used" style="width:4.62398373984px"></span>
+      </span>
+      <span class="usage_detail">(0.3 / 5.8 GiB)</span>
+    </div>
+</td>                  <td>
+    
+    <div class="bar">
+      <span style="display:none">0.000000</span>
+      <span class="prog_bar_full" style="width:100px">
+        <span class="prog_bar_used" style="width:0.0px"></span>
+      </span>
+      <span class="usage_detail">(0.0 / 3.7 GiB)</span>
+    </div>
+</td>                  <td>
+      
+      <span style="display:none">0.454741</span>
+      <div class="bar">
+        <span class="prog_bar_full" style="width:100px">
+          <span class="prog_bar_used" style="width:45.4740501118px"></span>
+        </span> /boot <span class="usage_detail">(0.2 / 0.5 GiB)</span>
+      </div>
+      
+      <span style="display:none">0.008982</span>
+      <div class="bar">
+        <span class="prog_bar_full" style="width:100px">
+          <span class="prog_bar_used" style="width:0.898196215009px"></span>
+        </span> /boot/efi <span class="usage_detail">(0.0 / 0.9 GiB)</span>
+      </div>
+      
+      <span style="display:none">0.030226</span>
+      <div class="bar">
+        <span class="prog_bar_full" style="width:100px">
+          <span class="prog_bar_used" style="width:3.02264557466px"></span>
+        </span> / <span class="usage_detail">(2.0 / 64.8 GiB)</span>
+      </div>
+</td>                  <td>
+      sr0: 1024.00 MB<br />
+      sda: 70.00 GB<br />
+      dm-0: 64.88 GB<br />
+      dm-1: 3.73 GB<br />
+</td>                  <td>
+  2
+</td>                  <td>
+  2021-04-07T08:44:40Z
+</td>                  <td>
+  Virtual Machine
+</td>                  <td>
+  NA
+</td>            </tr>
+      </tbody>
+      </table>
+    </div>
+  </div>
+
+  
+  <div id="hosts">
+      
+      
+  
+    <a name="172.31.17.86"></a>
+    <h3 class="toggle-collapse uncollapsed" id="172.31.17.86" data-host-name="172.31.17.86">172.31.17.86</h3>
+    <div class="collapsable uncollapsed">
+      <a class="toggle-all" href="">Close all</a>
+        
+  <h4 class="toggle-collapse uncollapsed">General</h4>
+  <div class="collapsable uncollapsed">
+  <table>
+    <tr><th>Node name</th><td>ace-hu-nbsz01</td></tr>
+    <tr><th>Form factor</th><td>Desktop</td></tr>
+    <tr><th>Virtualization role</th><td>guest</td></tr>
+    <tr><th>Virtualization type</th><td>VirtualPC</td></tr>
+  </table>
+  </div>
+
+        
+
+        
+
+        
+
+        
+  
+
+        
+
+        
+  <h4 class="toggle-collapse uncollapsed">Hardware</h4>
+  <div class="collapsable uncollapsed">
+  <table>
+    <tr><th>Vendor</th><td>Microsoft Corporation</td></tr>
+    <tr><th>Product name</th><td>Virtual Machine</td></tr>
+    <tr><th>Product serial</th><td>NA</td></tr>
+    <tr><th>Architecture</th><td>x86_64</td></tr>
+    <tr><th>Form factor</th><td>Desktop</td></tr>
+    <tr><th>Virtualization role</th><td>guest</td></tr>
+    <tr><th>Virtualization type</th><td>VirtualPC</td></tr>
+    <tr><th>Machine</th><td>x86_64</td></tr>
+    <tr><th>Processor type</th><td><a href="http://www.cpubenchmark.net/cpu.php?cpu=Intel(R) Xeon(R) CPU E5-2640 v3 @ 2.60GHz">Intel(R) Xeon(R) CPU E5-2640 v3 @ 2.60GHz</a></td></tr>
+    <tr><th>Processor count</th><td>1</td></tr>
+    <tr><th>Processor cores</th><td>1</td></tr>
+    <tr><th>Processor threads per core</th><td>2</td></tr>
+    <tr><th>Processor virtual CPUs</th><td>2</td></tr>
+    <tr><th>Mem total mb</th><td>5892</td></tr>
+    <tr><th>Mem free mb</th><td>4545</td></tr>
+    <tr><th>Swap total mb</th><td>8191</td></tr>
+    <tr><th>Swap free mb</th><td>8191</td></tr>
+  </table>
+  </div>
+
+        
+  <h4 class="toggle-collapse uncollapsed">Operating System</h4>
+  <div class="collapsable uncollapsed">
+  <table>
+    <tr><th>System</th><td>Linux</td></tr>
+    <tr><th>OS Family</th><td>Debian</td></tr>
+    <tr><th>Distribution</th><td>Ubuntu</td></tr>
+    <tr><th>Distribution version</th><td>20.04</td></tr>
+    <tr><th>Distribution release</th><td>focal</td></tr>
+    <tr><th>Kernel</th><td>5.4.0-70-generic</td></tr>
+    <tr><th>Userspace bits</th><td>64</td></tr>
+    <tr><th>Userspace_architecture</th><td>x86_64</td></tr>
+    <tr><th>Date time</th><td>2021-04-07T08:44:39Z</td></tr>
+    <tr><th>Locale / Encoding</th><td>Unknown</td></tr>
+        <tr><th>SELinux</th><td>
+  
+  <table>
+      
+      <tr>
+        <th>
+                status
+        </th>
+        <td>
+              disabled
+        </td>
+      </tr>
+  </table>
+</td></tr>
+    <tr><th>Package manager</th><td>apt</td></tr>
+  </table>
+  </div>
+
+        
+  <h4 class="toggle-collapse uncollapsed">Network</h4>
+  <div class="collapsable uncollapsed">
+  <table class="net_info">
+    <tr><th>Hostname</th><td>ace-hu-nbsz01</td></tr>
+    <tr><th>Domain</th><td></td></tr>
+    <tr><th>FQDN</th><td>ace-hu-nbsz01</td></tr>
+    <tr><th>All IPv4</th><td>172.31.17.86</td></tr>
+    <tr><th>All IPv6</th><td>fe80::215:5dff:fedc:d050</td></tr>
+  </table>
+    <table class="net_overview">
+      <tr>
+        <th>IPv4 Networks</th>
+        <td>
+          <table class="net_overview">
+            <tr>
+              <th>dev</th>
+              <th>address</th>
+              <th>network</th>
+              <th>netmask</th>
+            </tr>
+              
+                  <tr>
+                    <td>eth0</td>
+                    <td>172.31.17.86</td>
+                    <td>172.31.17.0</td>
+                      <td>255.255.255.0</td>
+                  </tr>
+              
+                  <tr>
+                    <td>lo</td>
+                    <td>127.0.0.1</td>
+                    <td>127.0.0.0</td>
+                      <td>255.0.0.0</td>
+                  </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+  
+    <h5 class="toggle-collapse uncollapsed">Interface details</h5>
+    <div class="collapsable uncollapsed">
+    <table class="net_iface_details">
+      <tr>
+        <th>Interface details</th>
+        <td>
+        </td>
+      </tr>
+    </table>
+    </div>
+  </div>
+
+        
+  <h4 class="toggle-collapse uncollapsed">Storage</h4>
+  <div class="collapsable uncollapsed">
+  <table>
+    <tr>
+      <th>Devices</th>
+      <td>
+          
+  
+  <table>
+      
+      <tr>
+        <th>
+                dm-1
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              8388608
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+      dm-name-ubuntu--vg-lv--swap
+      dm-uuid-LVM-fwRJE1mYsJoBZ6PkczI1koRWXaNz8ICHCH7J7qJF0xZnXug4yTnsMHYTLiPJ5nQk
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+      361ea1e6-7797-4235-9e56-00288e8635d4
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              33554432
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              4.00 GB
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                dm-0
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              135258112
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+      dm-name-ubuntu--vg-ubuntu--lv
+      dm-uuid-LVM-fwRJE1mYsJoBZ6PkczI1koRWXaNz8ICHhbH4LkFLPVnWnCgZdADZnq5kgHAWueas
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+      e822e9e5-b39b-41bf-b9b1-b19bcfddf661
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              33554432
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              64.50 GB
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sda
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              none
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              Msft
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              146800640
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+      scsi-14d53465420202020c1a11b924f90fc4aa1ab72793a56a226
+      scsi-360022480c1a11b924f9072793a56a226
+      wwn-0x60022480c1a11b924f9072793a56a226
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                sda2
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+      scsi-14d53465420202020c1a11b924f90fc4aa1ab72793a56a226-part2
+      scsi-360022480c1a11b924f9072793a56a226-part2
+      wwn-0x60022480c1a11b924f9072793a56a226-part2
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+      b9640989-386d-42b3-bd1e-577d4484ea88
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              2097152
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                start
+        </th>
+        <td>
+              1050624
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              1.00 GB
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              b9640989-386d-42b3-bd1e-577d4484ea88
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sda3
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+      dm-0
+      dm-1
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+      lvm-pv-uuid-31A1CS-QNIH-lGJg-7FcO-pKfr-3xUP-wPgsdi
+      scsi-14d53465420202020c1a11b924f90fc4aa1ab72793a56a226-part3
+      scsi-360022480c1a11b924f9072793a56a226-part3
+      wwn-0x60022480c1a11b924f9072793a56a226-part3
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              143650816
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                start
+        </th>
+        <td>
+              3147776
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+      ubuntu--vg-lv--swap
+      ubuntu--vg-ubuntu--lv
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              68.50 GB
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sda1
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+      scsi-14d53465420202020c1a11b924f90fc4aa1ab72793a56a226-part1
+      scsi-360022480c1a11b924f9072793a56a226-part1
+      wwn-0x60022480c1a11b924f9072793a56a226-part1
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+      2986-91BA
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              1048576
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                start
+        </th>
+        <td>
+              2048
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              512.00 MB
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              2986-91BA
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              33554432
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              Virtual Disk
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                wwn
+        </th>
+        <td>
+              0x60022480c1a11b924f9072793a56a226
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              70.00 GB
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                loop3
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              mq-deadline
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              63672
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              4096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              31.09 MB
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                loop2
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              mq-deadline
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              143120
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              4096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              69.88 MB
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                loop1
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              mq-deadline
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              113560
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              4096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              55.45 MB
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                loop0
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              mq-deadline
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              113424
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              4096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              55.38 MB
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                loop7
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              mq-deadline
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              0.00 Bytes
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                loop6
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              mq-deadline
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              4096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              0.00 Bytes
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                loop5
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              mq-deadline
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              144136
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              4096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              70.38 MB
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                loop4
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              mq-deadline
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              66096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              4096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              32.27 MB
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+  </table>
+
+      </td>
+    </tr>
+    <tr>
+      <th>Mounts</th>
+      <td>
+        
+  
+      
+  
+  <table>
+      
+      <tr>
+        <th>
+                block_used
+        </th>
+        <td>
+              2544174
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              e822e9e5-b39b-41bf-b9b1-b19bcfddf661
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_total
+        </th>
+        <td>
+              67628392448
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_total
+        </th>
+        <td>
+              16510838
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_available
+        </th>
+        <td>
+              4130473
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_available
+        </th>
+        <td>
+              13966664
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_available
+        </th>
+        <td>
+              57207455744
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                fstype
+        </th>
+        <td>
+              ext4
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_total
+        </th>
+        <td>
+              4227072
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                mount
+        </th>
+        <td>
+              /
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                device
+        </th>
+        <td>
+              /dev/mapper/ubuntu--vg-ubuntu--lv
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_used
+        </th>
+        <td>
+              96599
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_size
+        </th>
+        <td>
+              4096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                options
+        </th>
+        <td>
+              rw,relatime
+        </td>
+      </tr>
+  </table>
+
+      
+  
+  <table>
+      
+      <tr>
+        <th>
+                block_used
+        </th>
+        <td>
+              44182
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              b9640989-386d-42b3-bd1e-577d4484ea88
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_total
+        </th>
+        <td>
+              1023303680
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_total
+        </th>
+        <td>
+              249830
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_available
+        </th>
+        <td>
+              65232
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_available
+        </th>
+        <td>
+              205648
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_available
+        </th>
+        <td>
+              842334208
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                fstype
+        </th>
+        <td>
+              ext4
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_total
+        </th>
+        <td>
+              65536
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                mount
+        </th>
+        <td>
+              /boot
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                device
+        </th>
+        <td>
+              /dev/sda2
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_used
+        </th>
+        <td>
+              304
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_size
+        </th>
+        <td>
+              4096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                options
+        </th>
+        <td>
+              rw,relatime
+        </td>
+      </tr>
+  </table>
+
+      
+  
+  <table>
+      
+      <tr>
+        <th>
+                block_used
+        </th>
+        <td>
+              444
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              N/A
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_total
+        </th>
+        <td>
+              58195968
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_total
+        </th>
+        <td>
+              444
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                fstype
+        </th>
+        <td>
+              squashfs
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_total
+        </th>
+        <td>
+              10809
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                mount
+        </th>
+        <td>
+              /snap/core18/1944
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                device
+        </th>
+        <td>
+              /dev/loop0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_used
+        </th>
+        <td>
+              10809
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_size
+        </th>
+        <td>
+              131072
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                options
+        </th>
+        <td>
+              ro,nodev,relatime
+        </td>
+      </tr>
+  </table>
+
+      
+  
+  <table>
+      
+      <tr>
+        <th>
+                block_used
+        </th>
+        <td>
+              444
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              N/A
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_total
+        </th>
+        <td>
+              58195968
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_total
+        </th>
+        <td>
+              444
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                fstype
+        </th>
+        <td>
+              squashfs
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_total
+        </th>
+        <td>
+              10790
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                mount
+        </th>
+        <td>
+              /snap/core18/1997
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                device
+        </th>
+        <td>
+              /dev/loop1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_used
+        </th>
+        <td>
+              10790
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_size
+        </th>
+        <td>
+              131072
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                options
+        </th>
+        <td>
+              ro,nodev,relatime
+        </td>
+      </tr>
+  </table>
+
+      
+  
+  <table>
+      
+      <tr>
+        <th>
+                block_used
+        </th>
+        <td>
+              560
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              N/A
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_total
+        </th>
+        <td>
+              73400320
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_total
+        </th>
+        <td>
+              560
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                fstype
+        </th>
+        <td>
+              squashfs
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_total
+        </th>
+        <td>
+              1578
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                mount
+        </th>
+        <td>
+              /snap/lxd/19188
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                device
+        </th>
+        <td>
+              /dev/loop2
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_used
+        </th>
+        <td>
+              1578
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_size
+        </th>
+        <td>
+              131072
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                options
+        </th>
+        <td>
+              ro,nodev,relatime
+        </td>
+      </tr>
+  </table>
+
+      
+  
+  <table>
+      
+      <tr>
+        <th>
+                block_used
+        </th>
+        <td>
+              249
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              N/A
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_total
+        </th>
+        <td>
+              32636928
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_total
+        </th>
+        <td>
+              249
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                fstype
+        </th>
+        <td>
+              squashfs
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_total
+        </th>
+        <td>
+              472
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                mount
+        </th>
+        <td>
+              /snap/snapd/10707
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                device
+        </th>
+        <td>
+              /dev/loop3
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_used
+        </th>
+        <td>
+              472
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_size
+        </th>
+        <td>
+              131072
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                options
+        </th>
+        <td>
+              ro,nodev,relatime
+        </td>
+      </tr>
+  </table>
+
+      
+  
+  <table>
+      
+      <tr>
+        <th>
+                block_used
+        </th>
+        <td>
+              1997
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              2986-91BA
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_total
+        </th>
+        <td>
+              535805952
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_total
+        </th>
+        <td>
+              130812
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_available
+        </th>
+        <td>
+              128815
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_available
+        </th>
+        <td>
+              527626240
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                fstype
+        </th>
+        <td>
+              vfat
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_total
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                mount
+        </th>
+        <td>
+              /boot/efi
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                device
+        </th>
+        <td>
+              /dev/sda1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_used
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_size
+        </th>
+        <td>
+              4096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                options
+        </th>
+        <td>
+              rw,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=iso8859-1,shortname=mixed,errors=remount-ro
+        </td>
+      </tr>
+  </table>
+
+      
+  
+  <table>
+      
+      <tr>
+        <th>
+                block_used
+        </th>
+        <td>
+              259
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              N/A
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_total
+        </th>
+        <td>
+              33947648
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_total
+        </th>
+        <td>
+              259
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                fstype
+        </th>
+        <td>
+              squashfs
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_total
+        </th>
+        <td>
+              474
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                mount
+        </th>
+        <td>
+              /snap/snapd/11402
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                device
+        </th>
+        <td>
+              /dev/loop4
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_used
+        </th>
+        <td>
+              474
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_size
+        </th>
+        <td>
+              131072
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                options
+        </th>
+        <td>
+              ro,nodev,relatime
+        </td>
+      </tr>
+  </table>
+
+      
+  
+  <table>
+      
+      <tr>
+        <th>
+                block_used
+        </th>
+        <td>
+              564
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              N/A
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_total
+        </th>
+        <td>
+              73924608
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_total
+        </th>
+        <td>
+              564
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                fstype
+        </th>
+        <td>
+              squashfs
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_total
+        </th>
+        <td>
+              1578
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                mount
+        </th>
+        <td>
+              /snap/lxd/19647
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                device
+        </th>
+        <td>
+              /dev/loop5
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_used
+        </th>
+        <td>
+              1578
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_size
+        </th>
+        <td>
+              131072
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                options
+        </th>
+        <td>
+              ro,nodev,relatime
+        </td>
+      </tr>
+  </table>
+
+
+      </td>
+    </tr>
+  </table>
+  </div>
+
+    </div>
+
+      
+      
+  
+    <a name="172.31.17.87"></a>
+    <h3 class="toggle-collapse uncollapsed" id="172.31.17.87" data-host-name="172.31.17.87">172.31.17.87</h3>
+    <div class="collapsable uncollapsed">
+      <a class="toggle-all" href="">Close all</a>
+        
+  <h4 class="toggle-collapse uncollapsed">General</h4>
+  <div class="collapsable uncollapsed">
+  <table>
+    <tr><th>Node name</th><td>ace-hu-nbsz02</td></tr>
+    <tr><th>Form factor</th><td>Desktop</td></tr>
+    <tr><th>Virtualization role</th><td>guest</td></tr>
+    <tr><th>Virtualization type</th><td>VirtualPC</td></tr>
+  </table>
+  </div>
+
+        
+
+        
+
+        
+
+        
+  
+
+        
+
+        
+  <h4 class="toggle-collapse uncollapsed">Hardware</h4>
+  <div class="collapsable uncollapsed">
+  <table>
+    <tr><th>Vendor</th><td>Microsoft Corporation</td></tr>
+    <tr><th>Product name</th><td>Virtual Machine</td></tr>
+    <tr><th>Product serial</th><td>NA</td></tr>
+    <tr><th>Architecture</th><td>x86_64</td></tr>
+    <tr><th>Form factor</th><td>Desktop</td></tr>
+    <tr><th>Virtualization role</th><td>guest</td></tr>
+    <tr><th>Virtualization type</th><td>VirtualPC</td></tr>
+    <tr><th>Machine</th><td>x86_64</td></tr>
+    <tr><th>Processor type</th><td><a href="http://www.cpubenchmark.net/cpu.php?cpu=Intel(R) Xeon(R) CPU E5-2640 v3 @ 2.60GHz">Intel(R) Xeon(R) CPU E5-2640 v3 @ 2.60GHz</a></td></tr>
+    <tr><th>Processor count</th><td>1</td></tr>
+    <tr><th>Processor cores</th><td>1</td></tr>
+    <tr><th>Processor threads per core</th><td>2</td></tr>
+    <tr><th>Processor virtual CPUs</th><td>2</td></tr>
+    <tr><th>Mem total mb</th><td>5904</td></tr>
+    <tr><th>Mem free mb</th><td>5060</td></tr>
+    <tr><th>Swap total mb</th><td>3815</td></tr>
+    <tr><th>Swap free mb</th><td>3815</td></tr>
+  </table>
+  </div>
+
+        
+  <h4 class="toggle-collapse uncollapsed">Operating System</h4>
+  <div class="collapsable uncollapsed">
+  <table>
+    <tr><th>System</th><td>Linux</td></tr>
+    <tr><th>OS Family</th><td>RedHat</td></tr>
+    <tr><th>Distribution</th><td>OracleLinux</td></tr>
+    <tr><th>Distribution version</th><td>7.9</td></tr>
+    <tr><th>Distribution release</th><td>NA</td></tr>
+    <tr><th>Kernel</th><td>4.14.35-2047.501.2.el7uek.x86_64</td></tr>
+    <tr><th>Userspace bits</th><td>64</td></tr>
+    <tr><th>Userspace_architecture</th><td>x86_64</td></tr>
+    <tr><th>Date time</th><td>2021-04-07T08:44:40Z</td></tr>
+    <tr><th>Locale / Encoding</th><td>C</td></tr>
+        <tr><th>SELinux</th><td>
+  
+  <table>
+      
+      <tr>
+        <th>
+                config_mode
+        </th>
+        <td>
+              enforcing
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                mode
+        </th>
+        <td>
+              enforcing
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                policyvers
+        </th>
+        <td>
+              31
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                status
+        </th>
+        <td>
+              enabled
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                type
+        </th>
+        <td>
+              targeted
+        </td>
+      </tr>
+  </table>
+</td></tr>
+    <tr><th>Package manager</th><td>yum</td></tr>
+  </table>
+  </div>
+
+        
+  <h4 class="toggle-collapse uncollapsed">Network</h4>
+  <div class="collapsable uncollapsed">
+  <table class="net_info">
+    <tr><th>Hostname</th><td>ace-hu-nbsz02</td></tr>
+    <tr><th>Domain</th><td></td></tr>
+    <tr><th>FQDN</th><td>ace-hu-nbsz02</td></tr>
+    <tr><th>All IPv4</th><td>172.31.17.87</td></tr>
+    <tr><th>All IPv6</th><td>fe80::40d3:5e5c:a131:a581</td></tr>
+  </table>
+    <table class="net_overview">
+      <tr>
+        <th>IPv4 Networks</th>
+        <td>
+          <table class="net_overview">
+            <tr>
+              <th>dev</th>
+              <th>address</th>
+              <th>network</th>
+              <th>netmask</th>
+            </tr>
+              
+                  <tr>
+                    <td>eth0</td>
+                    <td>172.31.17.87</td>
+                    <td>172.31.17.0</td>
+                      <td>255.255.255.0</td>
+                  </tr>
+              
+                  <tr>
+                    <td>lo</td>
+                    <td>127.0.0.1</td>
+                    <td>127.0.0.0</td>
+                      <td>255.0.0.0</td>
+                  </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+  
+    <h5 class="toggle-collapse uncollapsed">Interface details</h5>
+    <div class="collapsable uncollapsed">
+    <table class="net_iface_details">
+      <tr>
+        <th>Interface details</th>
+        <td>
+        </td>
+      </tr>
+    </table>
+    </div>
+  </div>
+
+        
+  <h4 class="toggle-collapse uncollapsed">Storage</h4>
+  <div class="collapsable uncollapsed">
+  <table>
+    <tr>
+      <th>Devices</th>
+      <td>
+          
+  
+  <table>
+      
+      <tr>
+        <th>
+                sr0
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              deadline
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              Msft
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              2097151
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+      scsi-14d534654202020207305e3437703544694957d7ced624a7d
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              Virtual DVD-ROM
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              1024.00 MB
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sda
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              deadline
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              Msft
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              146800640
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+      scsi-3600224804719d77f023d2a3afdc9e9c9
+      wwn-0x600224804719d77f023d2a3afdc9e9c9
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                sda2
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+      scsi-3600224804719d77f023d2a3afdc9e9c9-part2
+      wwn-0x600224804719d77f023d2a3afdc9e9c9-part2
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+      44f0ba86-027a-4076-8c73-245ce36d998a
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              974848
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                start
+        </th>
+        <td>
+              1953792
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              476.00 MB
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              44f0ba86-027a-4076-8c73-245ce36d998a
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sda3
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+      dm-0
+      dm-1
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+      lvm-pv-uuid-Jed9BD-T13v-HTNZ-9Gkp-uK1g-vR31-gVpAZb
+      scsi-3600224804719d77f023d2a3afdc9e9c9-part3
+      wwn-0x600224804719d77f023d2a3afdc9e9c9-part3
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              143869952
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                start
+        </th>
+        <td>
+              2928640
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+      vg_system-lv_swap
+      vg_system-lv_root
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              68.60 GB
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sda1
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+      scsi-3600224804719d77f023d2a3afdc9e9c9-part1
+      wwn-0x600224804719d77f023d2a3afdc9e9c9-part1
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+      4611-9B45
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              1951744
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                start
+        </th>
+        <td>
+              2048
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              953.00 MB
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              4611-9B45
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              33554432
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              Virtual Disk
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                wwn
+        </th>
+        <td>
+              0x600224804719d77f023d2a3afdc9e9c9
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              70.00 GB
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                dm-0
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              136052736
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+      dm-name-vg_system-lv_root
+      dm-uuid-LVM-cMZ8ROul1hHFrV3o5ppiuExPHgeXDCf1NXrdmO71L0V1ndXC7Nbd9zJQFCG0dYYT
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+      796ef67b-43df-466e-84d8-6f2a80d69330
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              33554432
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              64.88 GB
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                dm-1
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                scheduler_mode
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                rotational
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                vendor
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectors
+        </th>
+        <td>
+              7815168
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                links
+        </th>
+        <td>
+              
+  
+  <table>
+      
+      <tr>
+        <th>
+                masters
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                labels
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                ids
+        </th>
+        <td>
+              
+  
+      dm-name-vg_system-lv_swap
+      dm-uuid-LVM-cMZ8ROul1hHFrV3o5ppiuExPHgeXDCf1VhRnv2DKaEvkt5al4EJPwZceZBgzjCS7
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuids
+        </th>
+        <td>
+              
+  
+      71226e94-c326-44ab-8547-94a23537d487
+
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_device_handle
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sas_address
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                virtual
+        </th>
+        <td>
+              1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                host
+        </th>
+        <td>
+              
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                sectorsize
+        </th>
+        <td>
+              512
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                removable
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                support_discard
+        </th>
+        <td>
+              33554432
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                model
+        </th>
+        <td>
+              None
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                partitions
+        </th>
+        <td>
+              
+  
+  <table>
+  </table>
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                holders
+        </th>
+        <td>
+              
+  
+
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size
+        </th>
+        <td>
+              3.73 GB
+        </td>
+      </tr>
+  </table>
+
+        </td>
+      </tr>
+  </table>
+
+      </td>
+    </tr>
+    <tr>
+      <th>Mounts</th>
+      <td>
+        
+  
+      
+  
+  <table>
+      
+      <tr>
+        <th>
+                block_used
+        </th>
+        <td>
+              54683
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              44f0ba86-027a-4076-8c73-245ce36d998a
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_total
+        </th>
+        <td>
+              492548096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_total
+        </th>
+        <td>
+              120251
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_available
+        </th>
+        <td>
+              487392
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_available
+        </th>
+        <td>
+              65568
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_available
+        </th>
+        <td>
+              268566528
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                fstype
+        </th>
+        <td>
+              xfs
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_total
+        </th>
+        <td>
+              487424
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                mount
+        </th>
+        <td>
+              /boot
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                device
+        </th>
+        <td>
+              /dev/sda2
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_used
+        </th>
+        <td>
+              32
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_size
+        </th>
+        <td>
+              4096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                options
+        </th>
+        <td>
+              rw,seclabel,relatime,attr2,inode64,noquota
+        </td>
+      </tr>
+  </table>
+
+      
+  
+  <table>
+      
+      <tr>
+        <th>
+                block_used
+        </th>
+        <td>
+              2187
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              4611-9B45
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_total
+        </th>
+        <td>
+              997326848
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_total
+        </th>
+        <td>
+              243488
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_available
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_available
+        </th>
+        <td>
+              241301
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_available
+        </th>
+        <td>
+              988368896
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                fstype
+        </th>
+        <td>
+              vfat
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_total
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                mount
+        </th>
+        <td>
+              /boot/efi
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                device
+        </th>
+        <td>
+              /dev/sda1
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_used
+        </th>
+        <td>
+              0
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_size
+        </th>
+        <td>
+              4096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                options
+        </th>
+        <td>
+              rw,relatime,fmask=0077,dmask=0077,codepage=437,iocharset=ascii,shortname=winnt,errors=remount-ro
+        </td>
+      </tr>
+  </table>
+
+      
+  
+  <table>
+      
+      <tr>
+        <th>
+                block_used
+        </th>
+        <td>
+              513798
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                uuid
+        </th>
+        <td>
+              796ef67b-43df-466e-84d8-6f2a80d69330
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_total
+        </th>
+        <td>
+              69624987648
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_total
+        </th>
+        <td>
+              16998288
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_available
+        </th>
+        <td>
+              67983521
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_available
+        </th>
+        <td>
+              16484490
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                size_available
+        </th>
+        <td>
+              67520471040
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                fstype
+        </th>
+        <td>
+              xfs
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_total
+        </th>
+        <td>
+              68026368
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                mount
+        </th>
+        <td>
+              /
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                device
+        </th>
+        <td>
+              /dev/mapper/vg_system-lv_root
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                inode_used
+        </th>
+        <td>
+              42847
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                block_size
+        </th>
+        <td>
+              4096
+        </td>
+      </tr>
+      
+      <tr>
+        <th>
+                options
+        </th>
+        <td>
+              rw,seclabel,relatime,attr2,inode64,noquota
+        </td>
+      </tr>
+  </table>
+
+
+      </td>
+    </tr>
+  </table>
+  </div>
+
+    </div>
+
+  </div>
+
+
+  <footer>
+    <p>Generated by <a href="https://github.com/fboender/ansible-cmdb">ansible-cmdb</a> v1.31 &dash; &copy; Ferry Boender 2017</p>
+  </footer>
+
+
+<script>
+$(document).ready( function () {
+  
+  function getQueryParams(qs) {
+    qs = qs.split('+').join(' ');
+    var params = {},
+      tokens,
+      re = /[?&]?([^=]+)=([^&]*)/g;
+    while (tokens = re.exec(qs)) {
+      params[decodeURIComponent(tokens[1])] = decodeURIComponent(tokens[2]);
+    }
+    return params;
+  }
+
+  // Get persisted column visibility from localStorage.
+  var columnVisibility = localStorage.getItem("columnVisibility");
+  if (columnVisibility == null) {
+    columnVisibility = {
+        "name": true,
+        "groups": false,
+        "cust": false,
+        "dtap": false,
+        "comment": false,
+        "ext_id": false,
+        "fqdn": true,
+        "main_ip": true,
+        "all_ipv4": false,
+        "all_ipv6": false,
+        "os": true,
+        "kernel": false,
+        "arch": false,
+        "virt": true,
+        "cpu_type": false,
+        "vcpus": true,
+        "ram": true,
+        "mem_usage": false,
+        "swap_usage": false,
+        "disk_usage": false,
+        "physdisk_size": false,
+        "nr_of_ifaces": false,
+        "timestamp": false,
+        "prodname": false,
+        "prodserial": false,
+    };
+    localStorage.setItem("columnVisibility", JSON.stringify(columnVisibility));
+  } else {
+    columnVisibility = JSON.parse(columnVisibility);
+  }
+
+  // Initialize the DataTables jQuery plugin on the host overview table
+  var table = $('#host_overview_tbl').DataTable({
+    paging: false,
+    columnDefs: [
+        {
+          "targets": [0],
+          "visible": true,
+          "sType": "string"
+        },
+        {
+          "targets": [1],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [2],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [3],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [4],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [5],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [6],
+          "visible": true,
+          "sType": "string"
+        },
+        {
+          "targets": [7],
+          "visible": true,
+          "sType": "string"
+        },
+        {
+          "targets": [8],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [9],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [10],
+          "visible": true,
+          "sType": "string"
+        },
+        {
+          "targets": [11],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [12],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [13],
+          "visible": true,
+          "sType": "string"
+        },
+        {
+          "targets": [14],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [15],
+          "visible": true,
+          "sType": "num"
+        },
+        {
+          "targets": [16],
+          "visible": true,
+          "sType": "num"
+        },
+        {
+          "targets": [17],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [18],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [19],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [20],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [21],
+          "visible": false,
+          "sType": "num"
+        },
+        {
+          "targets": [22],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [23],
+          "visible": false,
+          "sType": "string"
+        },
+        {
+          "targets": [24],
+          "visible": false,
+          "sType": "string"
+        },
+    ],
+    "fnInitComplete": function() {
+      // Focus the input field
+      $("#host_overview_tbl_filter input").focus();
+
+      // Set the search box value to the query string 'search' part
+      var qp = getQueryParams(document.location.search);
+      if ("search" in qp) {
+        $("#host_overview_tbl_filter input").val(qp.search);
+        this.fnFilter(qp.search);
+      }
+    }
+  });
+
+  // Display or hide columns based on localStorage preferences.
+  for (var columnId in columnVisibility) {
+    var columnButton = $("a[data-column-id='" + columnId +"']");
+    var columnNr = columnButton.attr('data-column');
+    var column = table.column(columnNr);
+    column.visible(columnVisibility[columnId]);
+    var newClass = ['col-invisible','col-visible'][Number(column.visible())];
+    columnButton.get(0).className = 'col-toggle ' + newClass;
+  }
+
+  // Show a direct link to the search term
+  table.on( 'search.dt', function () {
+    $('#filter_link').remove();
+    if (table.search() == "") {
+    } else {
+      $('#host_overview_tbl_filter label').after('<span id="filter_link">&nbsp; <a title="Direct link to search" href="?search='+table.search()+'">&nbsp;</a></span>');
+    }
+  } );
+
+  // Show and hide columns on button clicks
+  $('a.col-toggle').on('click', function(e) {
+    e.preventDefault();
+    var columnId = $(this).attr('data-column-id')
+    var column = table.column( $(this).attr('data-column') );
+    column.visible( ! column.visible() );
+    var newClass = ['col-invisible','col-visible'][Number(column.visible())];
+    e.target.className = 'col-toggle ' + newClass;
+
+    // Storage column visibility in localStorage.
+    columnVisibility[columnId] = column.visible();
+    localStorage.setItem("columnVisibility", JSON.stringify(columnVisibility));
+  });
+
+  // Open the Detailed host information when jumping to a host.
+  $('#host_overview td a').on('click', function(e) {
+    var hostId=$(this).attr('href').substr(1);
+    var hostElem = $("h3[data-host-name='"+hostId+"']");
+    hostElem.addClass('uncollapsed');
+    hostElem.removeClass('collapsed');
+    hostElem.next().removeClass('collapsed');
+  });
+
+  
+  // Open the detailed host information when clicking on the hosts header
+  $('.toggle-collapse').on('click', function(e) {
+    $(this).toggleClass('collapsed');
+    $(this).toggleClass('uncollapsed');
+    $(this).next().toggleClass('collapsed');
+  });
+
+  // Toggle opening and closing all information for a host.
+  $('a.toggle-all').on('click', function(e) {
+    e.preventDefault();
+    if ($(this).text() == "Open all") {
+      $(this).siblings('.collapsed').each(function(item) {
+        $(this).addClass('uncollapsed');
+        $(this).removeClass('collapsed');
+        $(this).next().toggleClass('collapsed');
+      });
+      $(this).text("Close all");
+    } else {
+      $(this).text("Open all");
+      $(this).siblings('.uncollapsed').each(function(item) {
+        $(this).addClass('collapsed');
+        $(this).removeClass('uncollapsed');
+        $(this).next().toggleClass('collapsed');
+      });
+    }
+  });
+
+
+  // Show host name in header bar when scrolling
+  $( window ).scroll(function() {
+    var scrollTop = $(window).scrollTop();
+    var curElem = false;
+    $( "#hosts h3" ).each(function( index ) {
+      var el = $(this);
+      if ((el.offset().top - 128) <= scrollTop) {
+        curElem = el;
+      } else {
+        return false;
+      }
+    });
+    if (curElem) {
+      $("header h1").text(curElem.text());
+      $('#top').show();
+    } else {
+      $("header h1").text("Host Overview");
+      $('#top').hide();
+    };
+  });
+});
+</script>
+
+
+  </body>
+  </html>
+
